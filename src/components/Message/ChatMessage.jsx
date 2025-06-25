@@ -7,12 +7,10 @@ import MicIcon from "@mui/icons-material/Mic";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useDispatch, useSelector } from "react-redux";
 import "./Message.css";
-import EmojiPicker from "emoji-picker-react";
 import { createMessage } from "../../Redux/Message/message.action";
 
 const ChatMessage = ({ message }) => {
   const [content, setContent] = useState("");
-  const [showEmoji, setShowEmoji] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const chatContainerRef = useRef(null);
   const dispatch = useDispatch();
@@ -23,10 +21,6 @@ const ChatMessage = ({ message }) => {
       dispatch(createMessage({ message: content }));
       setContent("");
     }
-  };
-
-  const handleEmojiClick = (emojiObject) => {
-    setContent((prevContent) => prevContent + emojiObject.emoji);
   };
 
   const handleKeyPress = (e) => {
@@ -52,7 +46,9 @@ const ChatMessage = ({ message }) => {
             <p className="font-semibold text-white">
               {message?.user?.firstName + " " + message?.user?.lastName}
             </p>
-            {isTyping && <p className="text-xs text-green-500">typing...</p>}
+            {isTyping && (
+              <p className="text-xs text-green-500">typing...</p>
+            )}
           </div>
         </div>
         <div className="flex space-x-3">
@@ -66,7 +62,7 @@ const ChatMessage = ({ message }) => {
       </div>
 
       {/* Chat Messages */}
-      <div
+      <div 
         ref={chatContainerRef}
         className="flex-1 p-4 space-y-4 overflow-y-auto bg-gradient-to-b from-gray-900 to-black"
       >
@@ -98,11 +94,6 @@ const ChatMessage = ({ message }) => {
 
       {/* Chat Input */}
       <div className="p-4 bg-gray-900">
-        {showEmoji && (
-          <div className="absolute bottom-20 right-4">
-            <EmojiPicker onEmojiClick={handleEmojiClick} theme="dark" />
-          </div>
-        )}
         <Paper
           component="form"
           className="flex items-center space-x-2 p-2 bg-gray-800 border border-gray-700"
@@ -110,7 +101,6 @@ const ChatMessage = ({ message }) => {
         >
           <IconButton
             size="small"
-            onClick={() => setShowEmoji(!showEmoji)}
             className="text-gray-400"
           >
             <EmojiEmotionsIcon />
