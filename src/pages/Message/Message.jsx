@@ -80,7 +80,7 @@ const onErr=(err)=>{
 }
   useEffect(() => {
    
-      const sock = new SockJS("https://socialmediaappbackend-production-8a21.up.railway.app//ws");
+      const sock = new SockJS("https://socialmediaappbackend-production-8a21.up.railway.app/ws");
       const stomp = Stomp.over(sock);
       setStompClient(stomp);
      

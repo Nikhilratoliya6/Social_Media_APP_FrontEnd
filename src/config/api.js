@@ -35,7 +35,7 @@ import axios from "axios";
 const getJwtToken = () => localStorage.getItem("jwt");
 
 // API Base URL with trailing slash to ensure proper path joining
-export const API_BASE_URL = 'https://socialmediaappbackend-production-8a21.up.railway.app/';
+export const API_BASE_URL = 'https://socialmediaappbackend-production-8a21.up.railway.app';
 
 // Create axios instance with dynamic header generation to get the latest token
 export const api = axios.create({
