@@ -4,18 +4,18 @@ import Routers from './Routes/Routers';
 import HomePage from './pages/HomePage/HomePage';
 import { Route, Routes } from 'react-router-dom';
 import Message from './pages/Message/Message';
-import Reels from './pages/Reels/Reels';
-import Authentication from './pages/Authentication/Authentication';
+import Reels from './pages/Reels/Reels.jsx';
+import Authentication from './pages/Authentication/Authentication.jsx';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { getUserProfile } from './Redux/Auth/auth.action';
-import PasswordChangeSuccess from './pages/Authentication/PasswordChangeSuccess';
-import VideoCall from './components/Message/VideoCall';
-import Demo from './pages/Message/Demo';
+import PasswordChangeSuccess from './pages/Authentication/PasswordChangeSuccess.jsx';
+import VideoCall from './components/Message/VideoCall.jsx';
+import Demo from './pages/Message/Demo.jsx';
 import VideoCalling from './components/Message/VideoCalling';
 
-import darkTheme from './theam/DarkTheam';
-import { ThemeProvider } from '@mui/material';
+import darkTheme from './theam/DarkTheam.jsx';
+import { ThemeProvider } from '@mui/material/styles';
 
 function App() {
   const dispatch=useDispatch();

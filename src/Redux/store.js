@@ -6,11 +6,11 @@ import commentReducer from "./Comment/comment.reducer";
 import { reelsReducer } from "./Reels/reels.reducer";
 import { messagesReducer } from "./Message/message.reducers";
 
-const rootReducers = combineReducers({
-  auth: authReducer,
+const rootReducers = combineReducers({  auth: authReducer,
   post: postReducer,
-  comment:commentReducer,
-  reel:reelsReducer,
-  chat:messagesReducer
+  comment: commentReducer,
+  reel: reelsReducer,
+  chat: messagesReducer
 });
+
 export const store = legacy_createStore(rootReducers, applyMiddleware(thunk));
