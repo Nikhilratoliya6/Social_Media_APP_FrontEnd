@@ -2,29 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+:root {
+  --color-background: #ffffff;
+  --color-foreground: #1a1a1a;
+  --color-primary: #0ea5e9;
+  --color-secondary: #d946ef;
+  
+  /* Typography */
+  --font-heading: 'Abril Fatface', serif;
+  --font-body: 'Space Grotesk', sans-serif;
+  --font-display: 'Outfit', sans-serif;
+}
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
+/* Base styles */
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-body);
+}
 
-    --primary: 199 89% 48%;
-    --primary-foreground: 210 40% 98%;
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+}
 
-    --secondary: 291 84% 61%;
-    --secondary-foreground: 210 40% 98%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
+/* Dark mode */
+[data-theme='dark'] {
+  --color-background: #000000;
+  --color-foreground: #ffffff;
+}
     --destructive-foreground: 210 40% 98%;
 
     --ring: 215 20.2% 65.1%;
+
+    --font-heading: 'Abril Fatface', serif;
+    --font-body: 'Space Grotesk', sans-serif;
+    --font-display: 'Outfit', sans-serif;
   }
 
   .dark {
@@ -50,13 +62,14 @@
 
     --ring: 216 34% 17%;
   }
-}
 
-@layer base {
   body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-    font-feature-settings: "rlig" 1, "calt" 1;
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
   }
 }
 
@@ -104,6 +117,37 @@
     rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 
     dark:bg-dark-100 dark:border-gray-600 dark:text-gray-300;
   }
+
+  .sidebar-link {
+    @apply flex items-center p-3 cursor-pointer rounded-xl 
+    hover:bg-gray-800 transition-all duration-200 group;
+  }
+
+  .sidebar-icon-wrapper {
+    @apply text-2xl text-gray-400 group-hover:text-white;
+  }
+
+  .sidebar-text {
+    @apply ml-3 text-gray-400 group-hover:text-white font-medium;
+  }
+
+  .nav-badge {
+    @apply absolute -top-1 -right-1 bg-primary-500 text-white 
+    text-xs font-bold px-1.5 py-0.5 rounded-full;
+  }
+}
+
+/* Additional utility classes */
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-display {
+  font-family: var(--font-display);
 }
 
 .Button {

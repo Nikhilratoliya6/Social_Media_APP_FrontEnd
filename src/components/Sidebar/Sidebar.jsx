@@ -1,20 +1,23 @@
 import React, { useState } from "react";
-import { Avatar, Button, Divider, Menu, MenuItem, IconButton } from "@mui/material";
+import { Avatar, Button, Divider, Menu, MenuItem, IconButton, Tooltip } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import MenuIcon from "@mui/icons-material/Menu";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { navigationMenu } from "./NavigationMenu";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../Redux/Auth/auth.action";
 import "./SideBar.css";
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
+import SettingsIcon from '@mui/icons-material/Settings';
+import Badge from '@mui/material/Badge';
 
 const Sidebar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showTooltips, setShowTooltips] = useState(false);
   const openLogoutMenu = Boolean(anchorEl);
   const { auth } = useSelector((store) => store);
-
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
 
   const handleOpenLogoutMenu = (event) => {
@@ -30,78 +33,137 @@ const Sidebar = () => {
     handleClose();
     navigate("/");
   };
-
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
-
   return (
-    <div className={`card text-white transition-all duration-300 bg-[rgb(3,11,40)] ${mobileMenuOpen ? 'h-auto' : 'h-screen'} flex flex-col justify-between py-5 lg:w-[280px] md:w-[100px] w-full fixed lg:relative z-50 ${mobileMenuOpen ? '' : 'md:h-screen'}`}>
-      <div className="space-y-8 pl-5">
-        <div className="flex items-center justify-between pr-5">
-          <span className="logo text-2xl font-bold md:hidden lg:block">Niktalk</span>
-          <IconButton 
-            color="inherit" 
-            className="md:hidden"
-            onClick={toggleMobileMenu}
-          >
-            <MenuIcon />
-          </IconButton>
-        </div>
-        
-        <div className={`space-y-8 ${mobileMenuOpen ? 'block' : 'hidden md:block'}`}>
+    <div className="relative h-screen flex flex-col justify-between py-5 border-r border-gray-800 bg-gradient-to-b from-black to-gray-900">
+      {/* Logo Section */}
+      <div className="px-5">
+        <h1 
+          className="text-4xl font-bold mb-12 bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent" 
+          style={{ fontFamily: 'Abril Fatface' }}
+        >
+          Niktalk
+        </h1>
+
+        {/* Navigation Items */}
+        <div className="space-y-1">
           {navigationMenu.map((item) => (
-            <div
+            <Tooltip 
               key={item.title}
-              onClick={() => {
-                item.title === "Profile"
-                  ? navigate(`/profile/${auth.user.id}`)
-                  : navigate(`${item.path}`);
-                setMobileMenuOpen(false);
-              }}
-              className="cursor-pointer flex space-x-3 items-center hover:bg-[rgba(255,255,255,0.1)] p-2 rounded-lg transition-all"
+              title={item.title}
+              placement="right"
+              arrow
+              enterDelay={500}
             >
-              <div className="text-2xl">{item.icon}</div>
-              <p className="text-xl md:hidden lg:block">{item.title}</p>
-            </div>
+              <div
+                onClick={() => {
+                  item.title === "Profile"
+                    ? navigate(`/profile/${auth.user.id}`)
+                    : navigate(`${item.path}`);
+                }}
+                className={`flex items-center p-3 cursor-pointer rounded-xl transition-all duration-200 group
+                  ${location.pathname === item.path 
+                    ? 'bg-gray-800 bg-opacity-50' 
+                    : 'hover:bg-gray-800 hover:bg-opacity-30'}`}
+              >
+                <div className={`text-2xl ${location.pathname === item.path 
+                  ? 'text-primary-500' 
+                  : 'text-gray-400 group-hover:text-white'}`}>
+                  {item.icon}
+                </div>
+                <span className={`ml-3 font-medium tracking-wide ${location.pathname === item.path 
+                  ? 'text-white' 
+                  : 'text-gray-400 group-hover:text-white'}`} 
+                  style={{ fontFamily: 'Space Grotesk' }}
+                >
+                  {item.title}
+                </span>
+              </div>
+            </Tooltip>
           ))}
         </div>
-      </div>
-      <div>
-        <Divider />
-        <div className="pl-5 flex items-center  justify-between pt-5">
-          <div className="flex items-center space-x-3">
-            <Avatar
-              alt="Remy Sharp"
-              src="https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_960_720.png"
-            />
 
-            <div>
-              <p className="font-bold">{auth.user?.firstName +" "+ auth.user?.lastName}</p>
-              <p className="opacity-70">{auth.user?.firstName}</p>
+        {/* Additional Features */}
+        <div className="mt-8 space-y-2">
+          <Tooltip title="Notifications" placement="right" arrow>
+            <div className="flex items-center p-3 cursor-pointer rounded-xl hover:bg-gray-800 transition-all duration-200 group">
+              <Badge badgeContent={3} color="primary">
+                <NotificationsIcon className="text-gray-400 group-hover:text-white" />
+              </Badge>
+              <span className="ml-3 text-gray-400 group-hover:text-white font-medium" style={{ fontFamily: 'Space Grotesk' }}>
+                Notifications
+              </span>
+            </div>
+          </Tooltip>
+
+          <Tooltip title="Bookmarks" placement="right" arrow>
+            <div className="flex items-center p-3 cursor-pointer rounded-xl hover:bg-gray-800 transition-all duration-200 group">
+              <BookmarkIcon className="text-gray-400 group-hover:text-white" />
+              <span className="ml-3 text-gray-400 group-hover:text-white font-medium" style={{ fontFamily: 'Space Grotesk' }}>
+                Bookmarks
+              </span>
+            </div>
+          </Tooltip>
+
+          <Tooltip title="Settings" placement="right" arrow>
+            <div className="flex items-center p-3 cursor-pointer rounded-xl hover:bg-gray-800 transition-all duration-200 group">
+              <SettingsIcon className="text-gray-400 group-hover:text-white" />
+              <span className="ml-3 text-gray-400 group-hover:text-white font-medium" style={{ fontFamily: 'Space Grotesk' }}>
+                Settings
+              </span>
+            </div>
+          </Tooltip>
+        </div>
+      </div>
+
+      {/* User Profile Section */}
+      <div className="mt-auto px-5">
+        <Divider className="mb-5 bg-gray-800" />
+        <div className="flex items-center justify-between p-3 cursor-pointer rounded-xl hover:bg-gray-800 transition-all duration-200">
+          <div className="flex items-center">
+            <Avatar
+              src={auth.user?.image}
+              alt={auth.user?.firstName}
+              className="border-2 border-gray-700"
+            />
+            <div className="ml-3">
+              <p className="font-medium text-white" style={{ fontFamily: 'Outfit' }}>
+                {auth.user?.firstName} {auth.user?.lastName}
+              </p>
+              <p className="text-sm text-gray-400" style={{ fontFamily: 'Space Grotesk' }}>
+                @{auth.user?.firstName?.toLowerCase()}_{auth.user?.lastName?.toLowerCase()}
+              </p>
             </div>
           </div>
-          <Button
-            id="basic-button"
-            aria-controls={openLogoutMenu ? "basic-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={openLogoutMenu ? "true" : undefined}
+          
+          <IconButton 
             onClick={handleOpenLogoutMenu}
+            className="text-gray-400 hover:text-white"
           >
             <MoreHorizIcon />
-          </Button>
-          <Menu
-            id="basic-menu"
-            anchorEl={anchorEl}
-            open={openLogoutMenu}
-            onClose={handleClose}
-            MenuListProps={{
-              "aria-labelledby": "basic-button",
-            }}
-          >
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
-          </Menu>
+          </IconButton>
         </div>
+
+        <Menu
+          anchorEl={anchorEl}
+          open={openLogoutMenu}
+          onClose={handleClose}
+          PaperProps={{
+            sx: {
+              backgroundColor: '#1e1e1e',
+              border: '1px solid #333',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+              '& .MuiMenuItem-root': {
+                color: '#fff',
+                fontFamily: 'Space Grotesk',
+                '&:hover': {
+                  backgroundColor: '#333',
+                },
+              },
+            },
+          }}
+        >
+          <MenuItem onClick={handleLogout}>Logout</MenuItem>
+        </Menu>
       </div>
     </div>
   );
