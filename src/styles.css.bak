@@ -104,3 +104,36 @@ body {
     transform: translateY(0);
   }
 }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Utilities */
+.shadow-modern {
+  box-shadow: var(--shadow-soft);
+}
+
+.transition-modern {
+  transition: var(--transition-base);
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --card-bg: #1e1e1e;
+    --border-color: #2d2d2d;
+    --text-color: #a0aec0;
+  }
+  
+  .card-modern {
+    background: var(--card-bg);
+  }
+  
+  .input-modern {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+    color: #e2e8f0;
+  }
+}
