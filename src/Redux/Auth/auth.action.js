@@ -96,20 +96,15 @@ export const registerUser = (userData) => async (dispatch) => {
 export const getUserProfile = (jwt) => async (dispatch) => {
   dispatch({type:GET_PROFILE_REUEST});
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/users/profile`,{
-      headers:{
-        "Authorization":`Bearer ${jwt}`,
-
-      }
-    });
+    const response = await api.get(`/api/users/profile`);
     const user = response.data;
     console.log("login user -: ", user);
    
     dispatch({type:GET_PROFILE_SUCCESS,payload:user});
   } catch (error) {
-    dispatch(
-      {type:GET_PROFILE_FAILURE,payload:error.message}
-    );
+    console.log("Profile fetch error:", error);
+    const errorMessage = error.response?.data?.message || error.message || "Failed to fetch profile";
+    dispatch({type:GET_PROFILE_FAILURE,payload:errorMessage});
   }
 };
 
@@ -175,30 +170,27 @@ export const FollowUserAction = (userId) => async (dispatch) => {
 export const resetPasswordRequest = (email) => async (dispatch) => {
   dispatch({type:REQUEST_RESET_PASSWORD_REQUEST});
   try {
-    const {data} = await axios.post(`${API_BASE_URL}/reset-password/reset?email=${email}`,{});
-    
+    const {data} = await api.post(`/reset-password/reset?email=${email}`, {});
     console.log("reset password -: ", data);
-   
     dispatch({type:REQUEST_RESET_PASSWORD_SUCCESS,payload:data});
   } catch (error) {
-    console.log("error ",error)
-    dispatch({type:REQUEST_RESET_PASSWORD_FAILURE,payload:error.message});
+    console.log("Reset password request error:", error);
+    const errorMessage = error.response?.data?.message || error.message || "Failed to request password reset";
+    dispatch({type:REQUEST_RESET_PASSWORD_FAILURE,payload:errorMessage});
   }
 };
 
 export const resetPassword = (reqData) => async (dispatch) => {
   dispatch({type:REQUEST_RESET_PASSWORD_REQUEST});
   try {
-    const {data} = await axios.post(`${API_BASE_URL}/reset-password`,reqData.data);
-    
+    const {data} = await api.post(`/reset-password`, reqData.data);
     console.log("reset password -: ", data);
-
     reqData.navigate("/password-change-success")
-   
     dispatch({type:REQUEST_RESET_PASSWORD_SUCCESS,payload:data});
   } catch (error) {
-    console.log("error ",error)
-    dispatch({type:REQUEST_RESET_PASSWORD_FAILURE,payload:error.message});
+    console.log("Reset password error:", error);
+    const errorMessage = error.response?.data?.message || error.message || "Failed to reset password";
+    dispatch({type:REQUEST_RESET_PASSWORD_FAILURE,payload:errorMessage});
   }
 };
 

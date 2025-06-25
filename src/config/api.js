@@ -42,11 +42,12 @@ export const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Access-Control-Allow-Origin': 'https://socialmediaapp-nikhil.netlify.app',
+    'Access-Control-Allow-Credentials': 'true'
   },
-  // Add timeout
-  timeout: 10000,
-  // Handle CORS
-  withCredentials: true,
+  timeout: 15000, // Increased timeout
+  withCredentials: false // Changed to false since we're handling CORS on the server side
 });
 
 // Request interceptor to include the latest JWT token and handle URL formatting
