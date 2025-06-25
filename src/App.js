@@ -14,7 +14,7 @@ import VideoCall from './components/Message/VideoCall.jsx';
 import Demo from './pages/Message/Demo.jsx';
 import VideoCalling from './components/Message/VideoCalling';
 
-import darkTheme from './theam/DarkTheam.jsx';
+import darkTheme from './theme/DarkTheam.jsx';
 import { ThemeProvider } from '@mui/material/styles';
 
 function App() {

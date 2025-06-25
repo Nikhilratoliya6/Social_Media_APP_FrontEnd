@@ -6,9 +6,9 @@ const darkTheme = createTheme({
       'Inter',
       '-apple-system',
       'BlinkMacSystemFont',
-      'Segoe UI',
+      '"Segoe UI"',
       'Roboto',
-      'Helvetica Neue',
+      '"Helvetica Neue"',
       'sans-serif'
     ].join(','),
     h1: {
