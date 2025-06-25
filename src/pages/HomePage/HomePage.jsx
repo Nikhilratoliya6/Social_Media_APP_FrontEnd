@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import Authentication from "../Authentication/Authentication";
 import CreateReelsForm from "../Reels/CreateReelsForm";
 import MenuIcon from "@mui/icons-material/Menu";
+import MobileNavBar from "../../components/Navigation/MobileNavBar";
 
 const HomePage = () => {
   const location = useLocation();
@@ -18,7 +19,7 @@ const HomePage = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-dark-200">
+    <div className="min-h-screen bg-black">
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-4 bg-white dark:bg-dark-100 shadow-sm">
         <span className="text-2xl font-bold text-primary-600">Niktalk</span>
         <IconButton
@@ -77,6 +78,10 @@ const HomePage = () => {
           )}
         </Grid>
       </div>
+
+      {/* Mobile Navigation */}
+      <MobileNavBar />
+
       <CreatePostModal />
     </div>
   );

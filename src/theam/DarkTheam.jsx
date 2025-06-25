@@ -1,13 +1,41 @@
 import { createTheme } from "@mui/material/styles";
 
 const darkTheme = createTheme({
+  typography: {
+    fontFamily: [
+      'Poppins',
+      '-apple-system',
+      'BlinkMacSystemFont',
+      'Segoe UI',
+      'Roboto',
+      'Helvetica Neue',
+      'sans-serif'
+    ].join(','),
+    h1: {
+      fontWeight: 700,
+      fontSize: '2rem',
+      lineHeight: 1.2,
+    },
+    h2: {
+      fontWeight: 600,
+      fontSize: '1.5rem',
+    },
+    body1: {
+      fontSize: '1rem',
+      lineHeight: 1.5,
+    },
+    button: {
+      textTransform: 'none',
+      fontWeight: 500,
+    },
+  },
   palette: {
     mode: "dark",
     primary: {
-      main: "#0ea5e9",
-      light: "#38bdf8",
-      dark: "#0369a1",
-      contrastText: "#ffffff",
+      main: '#FF3040', // Instagram-like red
+      light: '#FF4D5D',
+      dark: '#CC2636',
+      contrastText: '#ffffff',
     },
     secondary: {
       main: "#d946ef",
