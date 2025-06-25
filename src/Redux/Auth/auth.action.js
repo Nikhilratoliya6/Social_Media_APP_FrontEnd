@@ -41,7 +41,7 @@ import { GET_PROFILE_FAILURE } from "./auth.actionType.js";
 export const loginUser = (loginData) => async (dispatch) => {
   dispatch({type:LOGIN_REQUEST});
   try {
-    const response = await axios.post(`${API_BASE_URL}/auth/signin`, loginData.data);
+    const response = await api.post(`/auth/signin`, loginData.data);
     const user = response.data;
     console.log("login user -: ", user);
     if (user.jwt) {
@@ -50,8 +50,9 @@ export const loginUser = (loginData) => async (dispatch) => {
     }
     dispatch({type:LOGIN_SUCCESS,payload:user});
   } catch (error) {
-    console.log("error ",error)
-    dispatch({type:LOGIN_FAILURE,payload:error.message});
+    console.log("error ", error);
+    const errorMessage = error.response?.data?.message || error.message || "Login failed";
+    dispatch({type:LOGIN_FAILURE,payload:errorMessage});
   }
 };
 
@@ -75,7 +76,7 @@ export const loginUser = (loginData) => async (dispatch) => {
 export const registerUser = (userData) => async (dispatch) => {
   dispatch({type:REGISTER_REQUEST});
   try {
-    const response = await axios.post(`${API_BASE_URL}/auth/signup`, userData);
+    const response = await api.post(`/auth/signup`, userData);
     const user = response.data;
     console.log("created user - : ", user);
     if (user.jwt) {
@@ -83,9 +84,12 @@ export const registerUser = (userData) => async (dispatch) => {
     }
     dispatch({type:REGISTER_SUCCESS,payload:user});
   } catch (error) {
-    dispatch(
-      {type:REGISTER_FAILURE,payload:error.message}
-    );
+    console.log("Registration error:", error);
+    const errorMessage = error.response?.data?.message || error.message || "Registration failed";
+    dispatch({
+      type:REGISTER_FAILURE,
+      payload:errorMessage
+    });
   }
 };
 
