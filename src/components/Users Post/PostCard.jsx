@@ -31,74 +31,89 @@ export default function PostCard({ item }) {
     dispatch(createComment({ postId: item?.id, data: { content } }));
   };
 
-  const handlePostLike=()=>{
-dispatch(likePost(item?.id))
-  }
+  const handlePostLike = () => {
+    dispatch(likePost(item?.id));
+  };
 
-  const handleSavePost=()=>{
-    dispatch(savePost(item?.id))
-  }
+  const handleSavePost = () => {
+    dispatch(savePost(item?.id));
+  };
 
   return (
-    <div className="card" sx={{ w: "100%" }}>
+    <Card className="max-w-2xl w-full mx-auto mb-4 bg-white dark:bg-[#1e1e1e] shadow-lg rounded-lg overflow-hidden transition-all hover:shadow-xl">
       <CardHeader
-      className=""
+        className="px-4 py-3"
         avatar={
-          <Avatar sx={{ bgcolor:"#212534",color:"rgb(88,199,250)" }} aria-label="recipe">
+          <Avatar 
+            className="bg-primary-600 hover:scale-110 transition-transform cursor-pointer"
+            aria-label={item?.user?.firstName}
+            src={item?.user?.avatar}
+          >
             {item?.user?.firstName[0]}
           </Avatar>
         }
         action={
-          <IconButton color="primary" aria-label="settings">
+          <IconButton aria-label="settings" className="text-gray-600 dark:text-gray-300">
             <MoreVertIcon />
           </IconButton>
         }
-        title={item?.user?.firstName + " " + item?.user?.lastName}
+        title={
+          <Typography variant="subtitle1" className="font-semibold text-gray-900 dark:text-gray-100">
+            {item?.user?.firstName} {item?.user?.lastName}
+          </Typography>
+        }
         subheader={
-          "@" +
-          item?.user?.firstName.toLowerCase() +
-          "_" +
-          item?.user?.lastName.toLowerCase()
+          <Typography variant="caption" className="text-gray-500 dark:text-gray-400">
+            {new Date(item?.createdAt).toLocaleDateString()}
+          </Typography>
         }
       />
-     {item.image && <CardMedia
-        component="img"
-        height="194"
-        image={item?.image}
-        alt={item.caption}
-      />}
-      <CardContent>
-        <Typography variant="body2" color="primary">
+      
+      {item?.image && (
+        <div className="relative pt-[75%] w-full">
+          <CardMedia
+            component="img"
+            className="absolute top-0 left-0 w-full h-full object-cover"
+            image={item?.image}
+            alt={item?.caption || "Post image"}
+          />
+        </div>
+      )}
+
+      <CardContent className="px-4 py-3">
+        <Typography variant="body1" className="text-gray-800 dark:text-gray-200">
           {item?.caption}
         </Typography>
       </CardContent>
-      <CardActions className="flex justify-between" disableSpacing>
-        <div>
-           <IconButton color="primary" onClick={handlePostLike} aria-label="add to favorites">
-          {item?.likedByRequser ? (
-            <FavoriteIcon  sx={{ color: pink[500] }} />
-          ) : (
-            <FavoriteBorderIcon />
-          )}
-        </IconButton>
-        <IconButton color="primary" aria-label="share">
-          <ShareIcon />
-        </IconButton>
-        <IconButton color="primary" onClick={() => setShowComment(!showComment)}>
-          <ChatBubbleOutlineIcon />
-        </IconButton>
-        </div>
-        <div>
-          <IconButton color="primary" onClick={handleSavePost}>
-            
-            {item?.savedByRequser? <BookmarkIcon/>: <BookmarkBorderIcon/>}
-            
+
+      <CardActions className="px-4 py-2 flex justify-between border-t border-gray-100 dark:border-gray-800">
+        <div className="flex space-x-2">
+          <IconButton 
+            onClick={handlePostLike}
+            className={`transition-all ${item?.isLiked ? 'text-red-500 scale-110' : 'text-gray-600 dark:text-gray-300'}`}
+          >
+            {item?.isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+          </IconButton>
+          <IconButton 
+            onClick={() => setShowComment(!showComment)}
+            className="text-gray-600 dark:text-gray-300 hover:text-primary-600"
+          >
+            <ChatBubbleOutlineIcon />
+          </IconButton>
+          <IconButton className="text-gray-600 dark:text-gray-300 hover:text-primary-600">
+            <ShareIcon />
           </IconButton>
         </div>
-       
+        
+        <IconButton 
+          onClick={handleSavePost}
+          className={`transition-all ${item?.isSaved ? 'text-primary-600 scale-110' : 'text-gray-600 dark:text-gray-300'}`}
+        >
+          {item?.isSaved ? <BookmarkIcon /> : <BookmarkBorderIcon />}
+        </IconButton>
       </CardActions>
 
-      {showComment && (
+      <Collapse in={showComment} timeout="auto" unmountOnExit>
         <section>
           <div className="flex items-center space-x-5 mx-3 my-5">
             <Avatar sx={{bgcolor:"#212534",color:"rgb(88,199,250)"}}/>
@@ -136,7 +151,7 @@ dispatch(likePost(item?.id))
             ))}
           </div>
         </section>
-      )}
-    </div>
+      </Collapse>
+    </Card>
   );
 }

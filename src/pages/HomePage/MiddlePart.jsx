@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PostCard from "../../components/Users Post/PostCard";
 import StoryCircle from "../../components/Story/StoryCircle";
-import { Avatar, Card, IconButton } from "@mui/material";
+import { Avatar, Card, IconButton, Tooltip } from "@mui/material";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import ImageIcon from "@mui/icons-material/Image";
 import VideocamIcon from "@mui/icons-material/Videocam";
@@ -25,66 +25,92 @@ const MiddlePart = () => {
   }, [comment.create, auth.token]);
 
   return (
-    <div className="px-20">
-      <div className="bg- py-5 flex items-center bg-[#191c29] p-5 rounded-b-md">
-        <div className="flex flex-col items-center mr-4 cursor-pointer">
-          <Avatar sx={{ width: "5rem", height: "5rem",bgcolor:"#212534",color:"rgb(88,199,250)" }}>
-            <AddIcon sx={{ fontSize: "3rem" }} />
-          </Avatar>
-          <p>New</p>
-        </div>
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      {/* Stories Section */}
+      <div className="bg-white dark:bg-dark-100 rounded-xl shadow-soft overflow-x-auto">
+        <div className="flex p-4 space-x-4">
+          <Tooltip title="Create Story">
+            <div className="flex-shrink-0 flex flex-col items-center space-y-1">
+              <Avatar
+                sx={{
+                  width: "4rem",
+                  height: "4rem",
+                  bgcolor: "primary.main",
+                  transition: "transform 0.2s",
+                  "&:hover": {
+                    transform: "scale(1.05)",
+                  },
+                }}
+                className="ring-2 ring-primary-400 cursor-pointer"
+              >
+                <AddIcon sx={{ fontSize: "2rem" }} />
+              </Avatar>
+              <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                New
+              </span>
+            </div>
+          </Tooltip>
 
-        {story.map((item) => (
-          <StoryCircle
-            image={item.image}
-            username={item.username}
-            userId={item.userId}
-          />
-        ))}
+          <div className="flex space-x-4 pb-2">
+            {story.map((item, index) => (
+              <StoryCircle
+                key={index}
+                image={item.image}
+                username={item.username}
+                userId={item.userId}
+              />
+            ))}
+          </div>
+        </div>
       </div>
-      <div className="card p-5 mt-5">
-        <div className="flex justify-between">
-          <Avatar sx={{ bgcolor:"#212534",color:"rgb(88,199,250)" }} className="bg-[black]" />
-          <input
+
+      {/* Create Post Card */}
+      <Card className="bg-white dark:bg-dark-100 rounded-xl shadow-soft p-4">
+        <div className="flex items-center space-x-4">
+          <Avatar
+            sx={{
+              bgcolor: "primary.main",
+              width: "2.5rem",
+              height: "2.5rem",
+            }}
+          />
+          <div
             onClick={handleOpenCreatePostModal}
-            placeholder="Create new post..."
-            className="outline-none w-[90%] bg-slate-100 rounded-full px-5 bg-transparent border border-[#3b4054]"
-            readOnly
-            type="text"
-          />
-        </div>
-        <div className="flex justify-center space-x-9 mt-5">
-          <div className="flex items-center">
-            <IconButton color="primary" onClick={handleOpenCreatePostModal}>
-              <ImageIcon />
-            </IconButton>
-
-            <span>media</span>
-          </div>
-          <div className="flex  items-center">
-            <IconButton color="primary">
-              <VideocamIcon />
-            </IconButton>
-
-            <span>video</span>
-          </div>
-          <div className="flex  items-center">
-            <IconButton color="primary">
-              <ArticleIcon />
-            </IconButton>
-
-            <span>Write Article</span>
+            className="flex-grow cursor-pointer"
+          >
+            <div className="px-4 py-2 bg-gray-100 dark:bg-dark-200 rounded-full hover:bg-gray-200 dark:hover:bg-dark-300 transition-colors">
+              <p className="text-gray-600 dark:text-gray-400">
+                What's on your mind?
+              </p>
+            </div>
           </div>
         </div>
-        <div></div>
-      </div>
-      <div className="mt-5 space-y-5">
-        {post.posts.map((item) => (
-          <>
-            <PostCard item={item} />{" "}
-          </>
+
+        <div className="flex justify-around mt-4 pt-4 border-t border-gray-200 dark:border-dark-300">
+          <button className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-primary-500 transition-colors">
+            <ImageIcon />
+            <span className="font-medium">Photo</span>
+          </button>
+
+          <button className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-primary-500 transition-colors">
+            <VideocamIcon />
+            <span className="font-medium">Video</span>
+          </button>
+
+          <button className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-primary-500 transition-colors">
+            <ArticleIcon />
+            <span className="font-medium">Article</span>
+          </button>
+        </div>
+      </Card>
+
+      {/* Posts Feed */}
+      <div className="space-y-6">
+        {post?.posts?.map((item) => (
+          <PostCard key={item.id} item={item} />
         ))}
       </div>
+
       <CreatePostModal
         open={openCreatePostModal}
         handleClose={handleCloseCreatPostModal}

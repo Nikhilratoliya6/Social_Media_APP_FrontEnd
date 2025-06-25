@@ -1,26 +1,106 @@
-import { createTheme } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
 
 const darkTheme = createTheme({
   palette: {
-    mode: "dark", // This sets the theme to dark mode
+    mode: "dark",
     primary: {
-      main: "rgb(88,199,250)",
-       // Customize the primary color to your preference
-      // main: "red"
+      main: "#0ea5e9",
+      light: "#38bdf8",
+      dark: "#0369a1",
+      contrastText: "#ffffff",
     },
     secondary: {
-      main: "#5A20CB", // Customize the secondary color to your preference
-    },
-    black: {
-      main: "#242B2E",
+      main: "#d946ef",
+      light: "#e879f9",
+      dark: "#c026d3",
+      contrastText: "#ffffff",
     },
     background: {
-      main: "#212534",
-      default: "#212534",
-      paper: "#212534",
+      default: "#0f172a",
+      paper: "#1e293b",
     },
-    textColor: {
-      main: "#111111",
+    text: {
+      primary: "#f1f5f9",
+      secondary: "#94a3b8",
+    },
+    divider: "rgba(148,163,184,0.12)",
+  },
+  typography: {
+    fontFamily: "'Inter', sans-serif",
+    h1: {
+      fontSize: "2.5rem",
+      fontWeight: 600,
+      lineHeight: 1.2,
+    },
+    h2: {
+      fontSize: "2rem",
+      fontWeight: 600,
+      lineHeight: 1.3,
+    },
+    h3: {
+      fontSize: "1.75rem",
+      fontWeight: 600,
+      lineHeight: 1.3,
+    },
+    body1: {
+      fontSize: "1rem",
+      lineHeight: 1.5,
+      letterSpacing: "0.00938em",
+    },
+    button: {
+      textTransform: "none",
+      fontWeight: 500,
+    },
+  },
+  shape: {
+    borderRadius: 12,
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: "8px",
+          textTransform: "none",
+          fontSize: "0.875rem",
+          padding: "8px 16px",
+          "&:hover": {
+            transform: "translateY(-1px)",
+            boxShadow: "0 4px 12px rgba(14, 165, 233, 0.2)",
+          },
+        },
+        containedPrimary: {
+          background: "linear-gradient(45deg, #0ea5e9 30%, #38bdf8 90%)",
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: "16px",
+          backgroundImage: "none",
+        },
+      },
+    },
+    MuiCardHeader: {
+      styleOverrides: {
+        root: {
+          padding: "16px 24px",
+        },
+      },
+    },
+    MuiCardContent: {
+      styleOverrides: {
+        root: {
+          padding: "24px",
+        },
+      },
+    },
+    MuiCardActions: {
+      styleOverrides: {
+        root: {
+          padding: "16px 24px",
+        },
+      },
     },
   },
 });

@@ -1,0 +1,134 @@
+/* Modern design system styles */
+:root {
+  --shadow-soft: 0 2px 15px -3px rgba(0, 0, 0, 0.07),
+                 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+  --transition-base: all 0.2s ease-in-out;
+}
+
+/* Typography */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Buttons */
+.btn-modern {
+  padding: 0.625rem 1.25rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  transition: var(--transition-base);
+  cursor: pointer;
+}
+
+.btn-modern:hover {
+  transform: translateY(-1px);
+}
+
+/* Cards */
+.card-modern {
+  background: var(--card-bg, #fff);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-soft);
+  transition: var(--transition-base);
+}
+
+.card-modern:hover {
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Inputs */
+.input-modern {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 0.5rem;
+  transition: var(--transition-base);
+}
+
+.input-modern:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+}
+
+/* Navigation */
+.nav-link-modern {
+  position: relative;
+  padding: 0.5rem 1rem;
+  color: var(--text-color, #64748b);
+  transition: var(--transition-base);
+}
+
+.nav-link-modern:hover {
+  color: var(--primary);
+}
+
+.nav-link-modern::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--primary);
+  transition: var(--transition-base);
+  transform: translateX(-50%);
+}
+
+.nav-link-modern:hover::after {
+  width: 100%;
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Utilities */
+.shadow-modern {
+  box-shadow: var(--shadow-soft);
+}
+
+.transition-modern {
+  transition: var(--transition-base);
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --card-bg: #1e1e1e;
+    --border-color: #2d2d2d;
+    --text-color: #a0aec0;
+  }
+  
+  .card-modern {
+    background: var(--card-bg);
+  }
+  
+  .input-modern {
+    background: var(--card-bg);
+    border-color: var(--border-color);
+    color: #e2e8f0;
+  }
+}
