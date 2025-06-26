@@ -1,9 +1,9 @@
 import React from 'react';
-import { IconButton, Typography, Tooltip } from '@mui/material';
+import { IconButton, Typography, Tooltip, Badge } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import AddBoxOutlinedIcon from '@mui/icons-material/AddBoxOutlined';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -17,12 +17,16 @@ const Footer = () => {
     { icon: <HomeIcon />, label: 'Home', path: '/' },
     { icon: <SearchIcon />, label: 'Search', path: '/search' },
     { icon: <AddBoxOutlinedIcon />, label: 'Create', path: '/create' },
-    { icon: <FavoriteBorderIcon />, label: 'Activity', path: '/activity' },
+    { 
+      icon: <Badge badgeContent={3} color="primary"><NotificationsIcon /></Badge>, 
+      label: 'Activity', 
+      path: '/activity' 
+    },
     { icon: <PersonOutlineIcon />, label: 'Profile', path: `/profile/${auth.user?.id}` },
   ];
 
   return (
-    <footer className="fixed bottom-0 left-0 w-full md:hidden backdrop-blur-lg bg-black/80 border-t border-gray-800 py-3 px-4 z-50">
+    <footer className="block fixed bottom-0 left-0 w-full sm:hidden backdrop-blur-lg bg-black/80 border-t border-gray-800 py-2 px-4 z-40">
       <div className="flex justify-between items-center max-w-screen-sm mx-auto">
         {footerItems.map((item) => (
           <Tooltip 
@@ -34,16 +38,15 @@ const Footer = () => {
             <div className="flex flex-col items-center">
               <IconButton
                 onClick={() => navigate(item.path)}
-                className={`text-2xl transition-all duration-200 ${
+                className={`text-xl transition-all duration-200 ${
                   location.pathname === item.path 
-                    ? 'text-primary-500 transform scale-110' 
+                    ? 'text-primary-500 transform scale-105' 
                     : 'text-gray-400 hover:text-white'
                 }`}
                 sx={{
-                  padding: '8px',
+                  padding: '6px',
                   '&:hover': {
                     backgroundColor: 'rgba(255,255,255,0.05)',
-                    transform: 'scale(1.1)',
                   },
                 }}
               >
@@ -51,7 +54,7 @@ const Footer = () => {
               </IconButton>
               <Typography 
                 variant="caption" 
-                className={`mt-0.5 text-xs ${
+                className={`mt-0.5 text-[10px] ${
                   location.pathname === item.path 
                     ? 'text-primary-500' 
                     : 'text-gray-500'

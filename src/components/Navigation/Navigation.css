@@ -1,0 +1,70 @@
+.notification-popup {
+  animation: slideIn 0.3s ease-out forwards;
+}
+
+.notification-popup.exit {
+  animation: slideOut 0.3s ease-in forwards;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Mobile Footer Adjustments */
+@media (min-width: 640px) {
+  .mobile-footer {
+    display: none;
+  }
+}
+
+/* Ensure content doesn't get hidden behind footer on mobile */
+@media (max-width: 639px) {
+  .main-content {
+    padding-bottom: 4rem;
+  }
+}
+
+/* Notification Badge Animation */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.notification-badge {
+  animation: pulse 2s infinite;
+}
+
+/* Hide scrollbar for notifications panel but allow scrolling */
+.notifications-container {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.notifications-container::-webkit-scrollbar {
+  display: none;
+}

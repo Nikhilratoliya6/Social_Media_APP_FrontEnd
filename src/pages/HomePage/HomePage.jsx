@@ -1,25 +1,30 @@
 import { Card, Grid, IconButton } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import MiddlePart from "./MiddlePart";
 import HomeRight from "../../components/HomeRight/HomeRight";
-import { Route, Routes, useLocation } from "react-router-dom";
 import Reels from "../Reels/Reels";
 import Profile from "../Profile/Profile";
 import CreatePostModal from "../../components/CreatePost/CreatePostModal";
-import { useSelector } from "react-redux";
-import Authentication from "../Authentication/Authentication";
 import CreateReelsForm from "../Reels/CreateReelsForm";
 import MenuIcon from "@mui/icons-material/Menu";
 import MobileNavBar from "../../components/Navigation/MobileNavBar";
+import NotificationService from "../../utils/notificationService";
 
 const HomePage = () => {
   const location = useLocation();
   const { auth } = useSelector(store => store);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  useEffect(() => {
+    // Initialize notification service
+    NotificationService.initialize();
+  }, []);
+
   return (
-    <div className="min-h-screen bg-black">
+    <div className="px-2 lg:px-10 min-h-screen bg-black">
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between p-4 bg-white dark:bg-dark-100 shadow-sm">
         <span className="text-2xl font-bold text-primary-600">Niktalk</span>
         <IconButton

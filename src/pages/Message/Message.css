@@ -1,13 +1,64 @@
 .scrollBar::-webkit-scrollbar {
-    width: 5px;
+    width: 4px;
   }
   
   .scrollBar::-webkit-scrollbar-thumb {
-    background: rgb(79, 79, 79);
+    background: rgba(99, 102, 241, 0.5);
     border-radius: 1rem;
   }
   
   .scrollBar::-webkit-scrollbar-track {
-    background: rgb(139, 139, 139);
+    background: rgba(17, 24, 39, 0.3);
+  }
+  
+  .scrollBar::-webkit-scrollbar-thumb:hover {
+    background: rgba(99, 102, 241, 0.7);
+  }
+  
+  /* Typing indicator animation */
+  .typing-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+  
+  .typing-indicator span {
+    width: 3px;
+    height: 3px;
+    background-color: #10B981;
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out;
+  }
+  
+  .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+  .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+  
+  @keyframes bounce {
+    0%, 80%, 100% { transform: scale(0); }
+    40% { transform: scale(1); }
+  }
+  
+  /* Message transitions */
+  .message-enter {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  
+  .message-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 200ms ease-out, transform 200ms ease-out;
+  }
+  
+  /* Chat container animations */
+  .chat-container-enter {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  
+  .chat-container-enter-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 300ms ease-out, transform 300ms ease-out;
   }
   
