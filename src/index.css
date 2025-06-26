@@ -8,23 +8,13 @@
     --foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-
     --card: 0 0% 100%;
     --card-foreground: 222.2 47.4% 11.2%;
-
     --primary: 199 89% 48%;
     --primary-foreground: 210 40% 98%;
-
     --secondary: 291 84% 61%;
     --secondary-foreground: 210 40% 98%;
-
     --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --ring: 215 20.2% 65.1%;
   }
 
   .dark {
@@ -32,169 +22,26 @@
     --foreground: 213 31% 91%;
     --muted: 223 47% 11%;
     --muted-foreground: 215.4 16.3% 56.9%;
-
-    --card: 224 71% 4%;
-    --card-foreground: 213 31% 91%;
-
-    --primary: 199 89% 48%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 291 84% 61%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --accent: 216 34% 17%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --ring: 216 34% 17%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 @layer components {
   .sidebar-icon {
     @apply relative flex items-center justify-center 
-    h-12 w-12 mt-2 mb-2 mx-auto shadow-lg
-    bg-gray-800 text-primary-500
-    hover:bg-primary-600 hover:text-white
-    rounded-3xl hover:rounded-xl
-    transition-all duration-300 ease-linear
-    cursor-pointer;
+           h-12 w-12 mt-2 mb-2 mx-auto shadow-lg
+           bg-gray-800 text-green-500
+           hover:bg-green-600 hover:text-white
+           rounded-3xl hover:rounded-xl
+           transition-all duration-300 ease-linear
+           cursor-pointer;
   }
 
-  .sidebar-tooltip {
-    @apply absolute w-auto p-2 m-2 min-w-max left-14
-    rounded-md shadow-md
-    text-white bg-gray-900
-    text-xs font-bold
-    transition-all duration-100 scale-0 origin-left;
+  .hideScrollbar::-webkit-scrollbar {
+    display: none;
   }
-
-  .btn {
-    @apply px-4 py-2 rounded-lg transition-all duration-200
-    focus:outline-none focus:ring-2 focus:ring-opacity-50;
+  
+  .hideScrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
-
-  .btn-primary {
-    @apply bg-primary-500 text-white hover:bg-primary-600
-    focus:ring-primary-500;
-  }
-
-  .btn-secondary {
-    @apply bg-secondary-500 text-white hover:bg-secondary-600
-    focus:ring-secondary-500;
-  }
-
-  .card {
-    @apply bg-white dark:bg-dark-100 rounded-xl shadow-lg p-4
-    transition-all duration-200 hover:shadow-xl;
-  }
-
-  .input {
-    @apply w-full px-4 py-2 text-gray-700 bg-white border border-gray-300 
-    rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200 
-    dark:bg-dark-100 dark:border-gray-600 dark:text-gray-300;
-  }
-}
-
-.Button {
-  background-color: #000;
-  padding: 1rem 2rem;
-  border-radius: 0.5px;
-}
-.Button:hover {
-  background-color: white;
-}
-.hideScrollbar::-webkit-scrollbar {
-  height: 0;
-  width: 0;
-}
-
-.logo {
-  font-family: "Playball", cursive;
-  font-weight: bold;
-  font-size: 2rem;
-  /* font-family: 'Poppins', sans-serif; */
-}
-
-
-.card {
-  background: #191c29;
-  position: relative;
-  border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  /* font-size: 1.5em; */
-  color: rgb(88 199 250 / 100%);
-}
-
-@layer utilities {
-  .scrollbar-thin {
-    scrollbar-width: thin;
-  }
-
-  .scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
-    background-color: #d1d5db;
-    border-radius: 6px;
-  }
-
-  .scrollbar-thumb-gray-700::-webkit-scrollbar-thumb {
-    background-color: #374151;
-    border-radius: 6px;
-  }
-
-  .scrollbar-track-transparent::-webkit-scrollbar-track {
-    background-color: transparent;
-  }
-
-  .scrollbar-thumb-rounded::-webkit-scrollbar-thumb {
-    border-radius: 6px;
-  }
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Custom styles */
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-.animate-slide-up {
-  animation: slideUp 0.4s ease-out;
-}
-
-.shadow-soft {
-  box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07),
-              0 10px 20px -2px rgba(0, 0, 0, 0.04);
 }

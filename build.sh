@@ -11,5 +11,9 @@ npm install --save-dev @babel/plugin-proposal-private-property-in-object
 echo "Updating browserslist..."
 npx update-browserslist-db@latest
 
+echo "Installing and configuring Tailwind CSS..."
+npm install -D tailwindcss@latest postcss@latest autoprefixer@latest
+npx tailwindcss init -p
+
 echo "Building production bundle..."
-npm run build
+GENERATE_SOURCEMAP=false npm run build
