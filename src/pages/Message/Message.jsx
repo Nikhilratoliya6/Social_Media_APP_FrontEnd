@@ -5,9 +5,8 @@ import {
   Grid,
   IconButton,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import VideocamIcon from "@mui/icons-material/Videocam";
-import WestIcon from "@mui/icons-material/West";
 import ChatMessage from "../../components/Message/ChatMessage";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -18,10 +17,12 @@ import UserChatCard from "../../components/Message/UserChatCard";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
 import { uploadToCloudinary } from "../../utis/uploadToCloudniry";
 import "./Message.css";
-import { searchUser } from "../../Redux/Auth/auth.action";
 import SearchUser from "../../components/SearchUser/SearchUser";
 import SockJS from "sockjs-client";
 import Stomp from 'stompjs';
+
+const SOCKET_URL = "https://socialmediaappbackend-production-8a21.up.railway.app/ws";
+const RECONNECT_DELAY = 5000;
 
 const Message = () => {
   const dispatch = useDispatch();
@@ -29,6 +30,80 @@ const Message = () => {
   const [currentChat, setCurrentChat] = useState(null);
   const [loading, setLoading] = useState(false);
   const [stompClient, setStompClient] = useState(null);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const reconnectTimeoutRef = useRef(null);
+
+  const connectToWebSocket = useCallback(() => {
+    if (isConnecting || !auth.jwt) return;
+
+    setIsConnecting(true);
+    try {
+      const sock = new SockJS(SOCKET_URL);
+      const stomp = Stomp.over(sock);
+
+      // Disable debug logging
+      stomp.debug = null;
+
+      const headers = {
+        Authorization: `Bearer ${auth.jwt}`,
+      };
+
+      stomp.connect(
+        headers,
+        () => {
+          console.log("WebSocket Connected");
+          setStompClient(stomp);
+          setIsConnecting(false);
+
+          // Subscribe to user-specific topic
+          if (auth.user?.id) {
+            stomp.subscribe(`/user/${auth.user.id}/queue/messages`, (message) => {
+              const receivedMessage = JSON.parse(message.body);
+              // Handle received message
+              if (currentChat?.id === receivedMessage.chatId) {
+                dispatch({
+                  type: "NEW_MESSAGE_RECEIVED",
+                  payload: receivedMessage,
+                });
+              }
+            });
+          }
+        },
+        (error) => {
+          console.error("WebSocket Connection Error:", error);
+          setIsConnecting(false);
+          
+          // Clear any existing reconnection timeout
+          if (reconnectTimeoutRef.current) {
+            clearTimeout(reconnectTimeoutRef.current);
+          }
+
+          // Attempt to reconnect after delay
+          reconnectTimeoutRef.current = setTimeout(() => {
+            console.log("Attempting to reconnect...");
+            connectToWebSocket();
+          }, RECONNECT_DELAY);
+        }
+      );
+    } catch (error) {
+      console.error("WebSocket Setup Error:", error);
+      setIsConnecting(false);
+    }
+  }, [auth.jwt, auth.user?.id, currentChat?.id, dispatch, isConnecting]);
+
+  useEffect(() => {
+    connectToWebSocket();
+
+    return () => {
+      // Cleanup function
+      if (stompClient?.connected) {
+        stompClient.disconnect();
+      }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
+    };
+  }, [connectToWebSocket]);
 
   useEffect(() => {
     dispatch(getAllChats());
@@ -36,35 +111,20 @@ const Message = () => {
 
   const handleSelectImage = async (event) => {
     setLoading(true);
-    const imgUrl = await uploadToCloudinary(event.target.files[0], "image");
-    setLoading(false);
-    return imgUrl;
+    try {
+      const imgUrl = await uploadToCloudinary(event.target.files[0], "image");
+      setLoading(false);
+      return imgUrl;
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      setLoading(false);
+      return null;
+    }
   };
 
   const handleCreateChat = (userId) => {
     dispatch(createChat({ userId }));
   };
-
-  const onConnect = (frame) => {
-    console.log("Connected: ", frame);
-  };
-
-  const onError = (err) => {
-    console.log("Error: ", err);
-  };
-
-  useEffect(() => {
-    const sock = new SockJS("https://socialmediaappbackend-production-8a21.up.railway.app/ws");
-    const stomp = Stomp.over(sock);
-    setStompClient(stomp);
-    stomp.connect({}, onConnect, onError);
-
-    return () => {
-      if (stomp) {
-        stomp.disconnect();
-      }
-    };
-  }, []);
 
   return (
     <div className="h-screen bg-gray-900 text-gray-100">

@@ -8,6 +8,7 @@ import VideoCallIcon from '@mui/icons-material/VideoCall';
 import { useDispatch, useSelector } from "react-redux";
 import "./Message.css";
 import { createMessage } from "../../Redux/Message/message.action";
+import webSocketService from "../../utils/webSocketService";
 
 const ChatMessage = ({ message, onImageSelect }) => {
   const [content, setContent] = useState("");
@@ -18,22 +19,72 @@ const ChatMessage = ({ message, onImageSelect }) => {
   const [showEmoji, setShowEmoji] = useState(false);
   const typingTimeoutRef = useRef(null);
 
-  const handleCreateMessage = () => {
-    if (content.trim()) {
-      dispatch(createMessage({ message: content }));
+  useEffect(() => {
+    if (message?.id && auth.jwt) {
+      // Subscribe to chat-specific messages
+      const chatSubscription = webSocketService.subscribe(
+        `/chat/${message.id}`,
+        (newMessage) => {
+          // Handle new message
+          dispatch({
+            type: "NEW_MESSAGE_RECEIVED",
+            payload: newMessage
+          });
+        }
+      );
+
+      // Subscribe to typing indicators
+      const typingSubscription = webSocketService.subscribe(
+        `/chat/${message.id}/typing`,
+        (data) => {
+          if (data.userId !== auth.user.id) {
+            setIsTyping(true);
+            if (typingTimeoutRef.current) {
+              clearTimeout(typingTimeoutRef.current);
+            }
+            typingTimeoutRef.current = setTimeout(() => {
+              setIsTyping(false);
+            }, 2000);
+          }
+        }
+      );
+
+      return () => {
+        chatSubscription?.unsubscribe();
+        typingSubscription?.unsubscribe();
+      };
+    }
+  }, [message?.id, auth.jwt, auth.user.id]);
+
+  const handleCreateMessage = async () => {
+    if (!content.trim()) return;
+
+    try {
+      // Send message through WebSocket
+      await webSocketService.sendMessage(`/app/chat/${message.id}/message`, {
+        content: content.trim(),
+        chatId: message.id,
+        userId: auth.user.id,
+      });
+
       setContent("");
       setShowEmoji(false);
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      // Fallback to HTTP if WebSocket fails
+      dispatch(createMessage({ message: content, chatId: message.id }));
     }
   };
 
   const handleTyping = () => {
-    setIsTyping(true);
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
+    try {
+      webSocketService.sendMessage(`/app/chat/${message.id}/typing`, {
+        userId: auth.user.id,
+        typing: true
+      });
+    } catch (error) {
+      console.error("Failed to send typing indicator:", error);
     }
-    typingTimeoutRef.current = setTimeout(() => {
-      setIsTyping(false);
-    }, 2000);
   };
 
   const handleKeyPress = (e) => {
