@@ -7,9 +7,10 @@ class WebSocketService {
     this.socketUrl = "https://socialmediaappbackend-production-8a21.up.railway.app/ws";
     this.reconnectAttempts = 0;
     this.maxReconnectAttempts = 5;
-    this.reconnectDelay = 5000; // 5 seconds
+    this.reconnectDelay = 5000;
     this.subscriptions = new Map();
     this.connectionPromise = null;
+    this.onlineUsers = new Set();
   }
 
   connect(jwt) {
@@ -22,7 +23,6 @@ class WebSocketService {
         const socket = new SockJS(this.socketUrl);
         const stomp = Stomp.over(socket);
 
-        // Disable console logging
         stomp.debug = null;
 
         const headers = {
@@ -36,6 +36,17 @@ class WebSocketService {
             this.stompClient = stomp;
             this.reconnectAttempts = 0;
             this.resubscribe();
+            
+            // Subscribe to online status updates
+            this.subscribe('/topic/online-users', (users) => {
+              this.onlineUsers = new Set(users);
+            });
+            
+            // Send initial online status
+            this.sendMessage('/app/online-status', {
+              status: 'ONLINE'
+            });
+
             resolve(stomp);
           },
           (error) => {
@@ -49,18 +60,28 @@ class WebSocketService {
                 this.connect(jwt).then(resolve).catch(reject);
               }, this.reconnectDelay);
             } else {
-              reject(new Error('Max reconnection attempts reached'));
+              reject(error);
             }
           }
         );
 
-        socket.onclose = () => {
-          console.log('WebSocket Connection Closed');
-          this.connectionPromise = null;
-          if (this.reconnectAttempts < this.maxReconnectAttempts) {
-            this.connect(jwt);
-          }
-        };
+        // Handle window events for online status
+        window.addEventListener('beforeunload', () => {
+          this.sendMessage('/app/online-status', {
+            status: 'OFFLINE'
+          });
+        });
+
+        window.addEventListener('focus', () => {
+          this.sendMessage('/app/online-status', {
+            status: 'ONLINE'
+          });
+        });
+
+        window.addEventListener('blur', () => {
+          // Don't set offline on blur, user might be in another tab
+          // but still on the website
+        });
 
       } catch (error) {
         console.error('WebSocket Setup Error:', error);
@@ -72,46 +93,44 @@ class WebSocketService {
     return this.connectionPromise;
   }
 
-  subscribe(destination, callback) {
+  isConnected() {
+    return this.stompClient?.connected || false;
+  }
+
+  subscribe(topic, callback) {
     if (!this.stompClient) {
-      console.warn('WebSocket not connected. Adding to pending subscriptions.');
-      this.subscriptions.set(destination, callback);
-      return;
+      console.error('WebSocket not connected');
+      return null;
     }
 
-    const subscription = this.stompClient.subscribe(destination, (message) => {
+    const subscription = this.stompClient.subscribe(topic, (message) => {
       try {
-        const payload = JSON.parse(message.body);
-        callback(payload);
+        const data = JSON.parse(message.body);
+        callback(data);
       } catch (error) {
-        console.error('Error processing message:', error);
+        console.error('Failed to parse message:', error);
       }
     });
 
-    this.subscriptions.set(destination, callback);
+    this.subscriptions.set(topic, { callback, subscription });
     return subscription;
   }
 
-  resubscribe() {
-    if (!this.stompClient) return;
+  async sendMessage(destination, message) {
+    if (!this.stompClient?.connected) {
+      throw new Error('WebSocket not connected');
+    }
 
-    this.subscriptions.forEach((callback, destination) => {
-      this.subscribe(destination, callback);
-    });
-  }
-
-  sendMessage(destination, message) {
     return new Promise((resolve, reject) => {
-      if (!this.stompClient?.connected) {
-        reject(new Error('WebSocket not connected'));
-        return;
-      }
-
       try {
-        this.stompClient.send(destination, {}, JSON.stringify(message));
+        this.stompClient.send(
+          destination,
+          {},
+          JSON.stringify(message)
+        );
         resolve();
       } catch (error) {
-        console.error('Error sending message:', error);
+        console.error('Failed to send message:', error);
         reject(error);
       }
     });
@@ -119,13 +138,28 @@ class WebSocketService {
 
   disconnect() {
     if (this.stompClient?.connected) {
-      this.stompClient.disconnect();
+      // Send offline status before disconnecting
+      this.sendMessage('/app/online-status', {
+        status: 'OFFLINE'
+      }).finally(() => {
+        this.stompClient.disconnect();
+      });
     }
-    this.stompClient = null;
-    this.connectionPromise = null;
     this.subscriptions.clear();
+    this.connectionPromise = null;
+  }
+
+  resubscribe() {
+    for (const [topic, { callback }] of this.subscriptions.entries()) {
+      this.subscribe(topic, callback);
+    }
+  }
+
+  isUserOnline(userId) {
+    return this.onlineUsers.has(userId);
   }
 }
 
+// Create and export a singleton instance
 const webSocketService = new WebSocketService();
 export default webSocketService;

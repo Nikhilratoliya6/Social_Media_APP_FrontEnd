@@ -9,11 +9,14 @@ import { useDispatch, useSelector } from "react-redux";
 import "./Message.css";
 import { createMessage } from "../../Redux/Message/message.action";
 import webSocketService from "../../utils/webSocketService";
+import EmojiPicker from "emoji-picker-react";
 
 const ChatMessage = ({ message, onImageSelect }) => {
   const [content, setContent] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState(new Set());
   const chatContainerRef = useRef(null);
+  const fileInputRef = useRef(null);
   const dispatch = useDispatch();
   const { auth } = useSelector((store) => store);
   const [showEmoji, setShowEmoji] = useState(false);
@@ -23,13 +26,21 @@ const ChatMessage = ({ message, onImageSelect }) => {
     if (message?.id && auth.jwt) {
       // Subscribe to chat-specific messages
       const chatSubscription = webSocketService.subscribe(
-        `/chat/${message.id}`,
+        `/chat/${message.id}/messages`,
         (newMessage) => {
-          // Handle new message
           dispatch({
             type: "NEW_MESSAGE_RECEIVED",
             payload: newMessage
           });
+          scrollToBottom();
+        }
+      );
+
+      // Subscribe to online status updates
+      const onlineSubscription = webSocketService.subscribe(
+        '/topic/online-users',
+        (users) => {
+          setOnlineUsers(new Set(users));
         }
       );
 
@@ -49,30 +60,72 @@ const ChatMessage = ({ message, onImageSelect }) => {
         }
       );
 
+      // Send online status
+      webSocketService.sendMessage('/app/online-status', {
+        userId: auth.user.id,
+        status: 'ONLINE'
+      });
+
       return () => {
         chatSubscription?.unsubscribe();
         typingSubscription?.unsubscribe();
+        onlineSubscription?.unsubscribe();
+        webSocketService.sendMessage('/app/online-status', {
+          userId: auth.user.id,
+          status: 'OFFLINE'
+        });
       };
     }
   }, [message?.id, auth.jwt, auth.user.id]);
+
+  const scrollToBottom = () => {
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  };
 
   const handleCreateMessage = async () => {
     if (!content.trim()) return;
 
     try {
-      // Send message through WebSocket
-      await webSocketService.sendMessage(`/app/chat/${message.id}/message`, {
+      await webSocketService.sendMessage(`/app/chat/${message.id}/send`, {
         content: content.trim(),
         chatId: message.id,
         userId: auth.user.id,
+        type: 'TEXT'
       });
 
       setContent("");
       setShowEmoji(false);
+      scrollToBottom();
     } catch (error) {
       console.error("Failed to send message:", error);
       // Fallback to HTTP if WebSocket fails
-      dispatch(createMessage({ message: content, chatId: message.id }));
+      dispatch(createMessage({
+        content: content.trim(),
+        chatId: message.id,
+        type: 'TEXT'
+      }));
+    }
+  };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const mediaUrl = await onImageSelect(event);
+      if (mediaUrl) {
+        await webSocketService.sendMessage(`/app/chat/${message.id}/send`, {
+          content: mediaUrl,
+          chatId: message.id,
+          userId: auth.user.id,
+          type: file.type.startsWith('image/') ? 'IMAGE' : 'FILE'
+        });
+        scrollToBottom();
+      }
+    } catch (error) {
+      console.error("Failed to upload file:", error);
     }
   };
 
@@ -95,17 +148,6 @@ const ChatMessage = ({ message, onImageSelect }) => {
       handleTyping();
     }
   };
-
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
-    }
-    return () => {
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
-      }
-    };
-  }, [message]);
 
   const formatTimestamp = (timestamp) => {
     const date = new Date(timestamp);
