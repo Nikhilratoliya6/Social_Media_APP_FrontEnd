@@ -126,6 +126,16 @@ const Message = () => {
     dispatch(createChat({ userId }));
   };
 
+  const handleChatSelection = (selectedChat) => {
+    setCurrentChat(selectedChat);
+    // Update the selected state in the chat list
+    const updatedChats = chat.chats?.map(chat => ({
+      ...chat,
+      isSelected: chat.id === selectedChat.id
+    }));
+    dispatch({ type: "SET_CHATS", payload: updatedChats });
+  };
+
   return (
     <div className="h-screen bg-gray-900 text-gray-100">
       <Grid container className="h-full">
@@ -133,12 +143,16 @@ const Message = () => {
         <Grid item xs={12} sm={4} md={3} className="border-r border-gray-700 h-full">
           <div className="p-4 bg-gray-800 sticky top-0 z-10">
             <h1 className="text-xl font-semibold text-primary-300 mb-4">Messages</h1>
-            <SearchUser />
+            <SearchUser handleCreateChat={handleCreateChat} />
           </div>
           
           <div className="overflow-y-auto h-[calc(100%-80px)] scrollBar">
             {chat.chats?.map((item) => (
-              <div key={item.id} onClick={() => setCurrentChat(item)}>
+              <div 
+                key={item.id} 
+                onClick={() => handleChatSelection(item)}
+                className="cursor-pointer"
+              >
                 <UserChatCard chat={item} />
               </div>
             ))}

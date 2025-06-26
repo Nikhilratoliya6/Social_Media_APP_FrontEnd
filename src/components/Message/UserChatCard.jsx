@@ -1,54 +1,68 @@
 import { Avatar, CardHeader, IconButton } from "@mui/material";
-import { red } from "@mui/material/colors";
 import React from "react";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useSelector } from "react-redux";
 import PropTypes from 'prop-types';
 
-const UserChatCard = ({ item }) => {
+const UserChatCard = ({ chat }) => {
   const { auth } = useSelector((store) => store);
 
-  if (!item) {
-    return null; // Or return a fallback UI component
+  if (!chat) {
+    return null;
   }
 
-  const lastMessage = item.messages && item.messages.length > 0 
-    ? item.messages[item.messages.length - 1]?.content 
+  // Get the other user from the chat members
+  const otherUser = chat.users?.find(user => user.id !== auth.user?.id);
+  const lastMessage = chat.messages && chat.messages.length > 0 
+    ? chat.messages[chat.messages.length - 1]?.content 
     : '';
 
   return (
-    <CardHeader
-      avatar={
-        <Avatar
-          sx={{
-            width: "3.5rem",
-            height: "3.5rem",
-            fontSize: "1.5rem",
-            bgcolor: "#191c29",
-            color: "rgb(88,199,250)"
-          }}
-          aria-label="user avatar"
-          src={item.image || undefined}
-          alt={item.chat_name || 'User'}
-        >
-          {!item.image && (item.chat_name?.[0]?.toUpperCase() || '?')}
-        </Avatar>
-      }
-      action={
-        <IconButton aria-label="settings">
-          <MoreHorizIcon />
-        </IconButton>
-      }
-      title={item.chat_name || 'Unknown User'}
-      subheader={lastMessage || 'No messages yet'}
-    />
+    <div className={`hover:bg-gray-800 cursor-pointer transition-colors duration-200 ${chat.isSelected ? 'bg-gray-800' : ''}`}>
+      <CardHeader
+        avatar={
+          <Avatar
+            sx={{
+              width: "3.5rem",
+              height: "3.5rem",
+              fontSize: "1.5rem",
+              bgcolor: "#191c29",
+              color: "rgb(88,199,250)"
+            }}
+            aria-label="user avatar"
+            src={otherUser?.image || undefined}
+            alt={otherUser?.firstName || 'User'}
+          >
+            {!otherUser?.image && ((otherUser?.firstName?.[0] || '?').toUpperCase())}
+          </Avatar>
+        }
+        action={
+          <IconButton aria-label="settings">
+            <MoreHorizIcon />
+          </IconButton>
+        }
+        title={`${otherUser?.firstName || 'Unknown'} ${otherUser?.lastName || ''}`}
+        subheader={
+          <span className="text-gray-400">
+            {lastMessage || 'No messages yet'}
+          </span>
+        }
+      />
+    </div>
   );
 };
 
 UserChatCard.propTypes = {
-  item: PropTypes.shape({
-    image: PropTypes.string,
-    chat_name: PropTypes.string,
+  chat: PropTypes.shape({
+    id: PropTypes.number,
+    users: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number,
+        firstName: PropTypes.string,
+        lastName: PropTypes.string,
+        image: PropTypes.string
+      })
+    ),
     messages: PropTypes.arrayOf(
       PropTypes.shape({
         content: PropTypes.string
